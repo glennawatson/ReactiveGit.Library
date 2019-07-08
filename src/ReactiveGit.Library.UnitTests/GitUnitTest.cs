@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ReactiveGit.Library.Core.Exceptions;
 using ReactiveGit.Library.Core.Model;
 using ReactiveGit.Library.RunProcess.Managers;
+using Splat;
 
 namespace ReactiveGit.Library.UnitTests
 {
@@ -24,6 +25,14 @@ namespace ReactiveGit.Library.UnitTests
     [TestClass]
     public class GitUnitTest
     {
+        /// <summary>
+        /// Initializes static members of the <see cref="GitUnitTest"/> class.
+        /// </summary>
+        static GitUnitTest()
+        {
+            Splat.Locator.CurrentMutable.RegisterConstant<ILogger>(new ConsoleLogger());
+        }
+
         /// <summary>
         /// Test creating several branches and making sure that the full history comes back.
         /// </summary>

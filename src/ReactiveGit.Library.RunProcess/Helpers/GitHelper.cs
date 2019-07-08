@@ -5,7 +5,9 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Microsoft.Win32;
+using Splat;
 
 namespace ReactiveGit.Library.RunProcess.Helpers
 {
@@ -14,6 +16,18 @@ namespace ReactiveGit.Library.RunProcess.Helpers
     /// </summary>
     public static class GitHelper
     {
+        private static ILogger _logger;
+        private static Lazy<string> _gitInstallationPath;
+
+        /// <summary>
+        /// Initializes static members of the <see cref="GitHelper"/> class.
+        /// </summary>
+        static GitHelper()
+        {
+            _logger = Locator.Current.GetService<ILogManager>().GetLogger(typeof(GitHelper));
+            _gitInstallationPath = new Lazy<string>(GetGitInstallationPathInternal, LazyThreadSafetyMode.PublicationOnly);
+        }
+
         /// <summary>
         /// Gets the binary path to the GIT executable.
         /// </summary>
@@ -34,21 +48,32 @@ namespace ReactiveGit.Library.RunProcess.Helpers
         /// Gets the path to the installation path.
         /// </summary>
         /// <returns>The installation path.</returns>
-        public static string GetGitInstallationPath()
+        public static string GetGitInstallationPath() => _gitInstallationPath.Value;
+
+        /// <summary>
+        /// Gets the path to the installation path.
+        /// </summary>
+        /// <returns>The installation path.</returns>
+        private static string GetGitInstallationPathInternal()
         {
             var gitPath = GetInstallPathFromEnvironmentVariable();
             if (gitPath != null)
             {
+                _logger.Write("Found GIT in directory from the environment path: " + gitPath, LogLevel.Debug);
                 return gitPath;
             }
 
             gitPath = GetInstallPathFromRegistry();
             if (gitPath != null)
             {
+                _logger.Write("Found GIT in directory from the registry: " + gitPath, LogLevel.Debug);
                 return gitPath;
             }
 
             gitPath = GetInstallPathFromProgramFiles();
+
+            _logger.Write("Found GIT in directory from program files: " + gitPath, LogLevel.Debug);
+
             return gitPath;
         }
 
@@ -56,7 +81,7 @@ namespace ReactiveGit.Library.RunProcess.Helpers
         /// Attempt to get the installation path from the path variable.
         /// </summary>
         /// <returns>The installation path or null if unable to be found.</returns>
-        public static string GetInstallPathFromEnvironmentVariable()
+        private static string GetInstallPathFromEnvironmentVariable()
         {
             var path = Environment.GetEnvironmentVariable("PATH");
             if (path == null)
@@ -78,7 +103,7 @@ namespace ReactiveGit.Library.RunProcess.Helpers
         /// Attempts to get the installation path searching the program files directory.
         /// </summary>
         /// <returns>The installation path or null if unable to be found.</returns>
-        public static string GetInstallPathFromProgramFiles()
+        private static string GetInstallPathFromProgramFiles()
         {
             // If this is a 64bit OS, and the user installed 64bit git, then explictly search that folder.
             if (Environment.Is64BitOperatingSystem)
@@ -107,7 +132,7 @@ namespace ReactiveGit.Library.RunProcess.Helpers
         /// Attempt to get the installation path from the registry.
         /// </summary>
         /// <returns>The installation path or null if unable to be found.</returns>
-        public static string GetInstallPathFromRegistry()
+        private static string GetInstallPathFromRegistry()
         {
             // Check reg key for msysGit 2.6.1+
             var installLocation = Registry.GetValue(

@@ -5,7 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reactive.Linq;
 using ReactiveGit.Library.Core.Managers;
+using Splat;
 
 namespace ReactiveGit.Library.Core.Model
 {
@@ -13,7 +15,7 @@ namespace ReactiveGit.Library.Core.Model
     /// A commit in GIT.
     /// </summary>
     [DebuggerDisplay("Id = {Sha}")]
-    public class GitCommit : IEquatable<GitCommit>, IGitIdObject
+    public class GitCommit : IEquatable<GitCommit>, IGitIdObject, IEnableLogger
     {
         private readonly IBranchManager _branchManager;
 
@@ -53,7 +55,7 @@ namespace ReactiveGit.Library.Core.Model
             AuthorEmail = authorEmail;
 
             _branchManager = branchManager ?? throw new ArgumentNullException(nameof(branchManager));
-            MessageLong = _branchManager.GetCommitMessageLong(this);
+            MessageLong = _branchManager.GetCommitMessageLong(this).Do(x => this.Log().Debug("Got a long commit message with " + x));
         }
 
         /// <summary>
