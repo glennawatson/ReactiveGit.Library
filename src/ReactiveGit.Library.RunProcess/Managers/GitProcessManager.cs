@@ -58,94 +58,85 @@ namespace ReactiveGit.Library.RunProcess.Managers
             bool showInOutput = false,
             IScheduler scheduler = null)
         {
-            scheduler = scheduler ?? TaskPoolScheduler.Default;
+            scheduler = scheduler ?? ImmediateScheduler.Instance;
             return Observable.Create<string>(
-                (observer) =>
+                async (observer, token) =>
                     {
-                        var d = new CompositeDisposable();
+                        var gitArguments = string.Join(" ", gitArgumentsEnumerable);
+                        if (includeStandardArguments)
+                        {
+                            gitArguments =
+                                $"--no-pager -c color.branch=false -c color.diff=false -c color.status=false -c diff.mnemonicprefix=false -c core.quotepath=false {gitArguments}";
+                        }
 
-                        var schedule = scheduler.ScheduleAsync(
-                            async (_, token) =>
+                        if (showInOutput)
+                        {
+                            _gitOutput.OnNext($"execute: git {gitArguments}");
+                        }
+
+                        using (var process = CreateGitProcess(gitArguments, RepositoryPath))
+                        {
+                            if (extraEnvironmentVariables != null)
+                            {
+                                foreach (var kvp in extraEnvironmentVariables)
                                 {
-                                    var gitArguments = string.Join(" ", gitArgumentsEnumerable);
-                                    if (includeStandardArguments)
+                                    process.StartInfo.EnvironmentVariables.Add(kvp.Key, kvp.Value);
+                                }
+                            }
+
+                            var errorOutput = new StringBuilder();
+                            process.ErrorDataReceived += (sender, e) =>
+                                {
+                                    if (e.Data == null)
                                     {
-                                        gitArguments =
-                                            $"--no-pager -c color.branch=false -c color.diff=false -c color.status=false -c diff.mnemonicprefix=false -c core.quotepath=false {gitArguments}";
+                                        return;
                                     }
 
                                     if (showInOutput)
                                     {
-                                        _gitOutput.OnNext($"execute: git {gitArguments}");
+                                        _gitOutput.OnNext(e.Data);
                                     }
 
-                                    using (var process = CreateGitProcess(gitArguments, RepositoryPath))
+                                    errorOutput.AppendLine(e.Data);
+                                    observer.OnNext(e.Data);
+                                };
+
+                            process.OutputDataReceived += (sender, e) =>
+                                {
+                                    if (e.Data == null)
                                     {
-                                        if (extraEnvironmentVariables != null)
-                                        {
-                                            foreach (var kvp in extraEnvironmentVariables)
-                                            {
-                                                process.StartInfo.EnvironmentVariables.Add(kvp.Key, kvp.Value);
-                                            }
-                                        }
-
-                                        var errorOutput = new StringBuilder();
-                                        process.ErrorDataReceived += (sender, e) =>
-                                            {
-                                                if (e.Data == null)
-                                                {
-                                                    return;
-                                                }
-
-                                                if (showInOutput)
-                                                {
-                                                    _gitOutput.OnNext(e.Data);
-                                                }
-
-                                                errorOutput.AppendLine(e.Data);
-                                                observer.OnNext(e.Data);
-                                            };
-
-                                        process.OutputDataReceived += (sender, e) =>
-                                            {
-                                                if (e.Data == null)
-                                                {
-                                                    return;
-                                                }
-
-                                                if (showInOutput)
-                                                {
-                                                    _gitOutput.OnNext(e.Data);
-                                                }
-
-                                                errorOutput.AppendLine(e.Data);
-                                                observer.OnNext(e.Data);
-                                            };
-
-                                        if (token.IsCancellationRequested)
-                                        {
-                                            observer.OnCompleted();
-                                            return Disposable.Empty;
-                                        }
-
-                                        var returnValue = await RunProcessAsync(process, token).ConfigureAwait(false);
-
-                                        if (returnValue != 0)
-                                        {
-                                            observer.OnError(new GitProcessException(gitArguments, errorOutput.ToString()));
-                                        }
-
-                                        observer.OnCompleted();
-
-                                        _gitUpdated.OnNext(Unit.Default);
-
-                                        return Disposable.Empty;
+                                        return;
                                     }
-                                });
 
-                        d.Add(schedule);
-                        return d;
-                    });
+                                    if (showInOutput)
+                                    {
+                                        _gitOutput.OnNext(e.Data);
+                                    }
+
+                                    errorOutput.AppendLine(e.Data);
+                                    observer.OnNext(e.Data);
+                                };
+
+                            if (token.IsCancellationRequested)
+                            {
+                                observer.OnCompleted();
+                                return Disposable.Empty;
+                            }
+
+                            var returnValue = await RunProcessAsync(process, token).ConfigureAwait(false);
+
+                            if (returnValue != 0)
+                            {
+                                observer.OnError(new GitProcessException(gitArguments, errorOutput.ToString()));
+                            }
+
+                            observer.OnCompleted();
+
+                            _gitUpdated.OnNext(Unit.Default);
+
+                            return Disposable.Empty;
+                        }
+                    }).ObserveOn(scheduler);
         }
 
         /// <inheritdoc />
