@@ -12,10 +12,6 @@ namespace ReactiveGit.Library.Core.Model
     /// </summary>
     public class GitTag : IGitIdObject
     {
-        private readonly Lazy<string> _message;
-
-        private readonly ITagManager _tagManager;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="GitTag"/> class.
         /// </summary>
@@ -27,12 +23,11 @@ namespace ReactiveGit.Library.Core.Model
         public GitTag(ITagManager tagManager, string name, string shaShort, string sha, DateTime dateTime)
         {
             Name = name;
-            _tagManager = tagManager;
             Sha = sha;
             ShaShort = shaShort;
             DateTime = dateTime;
 
-            _message = new Lazy<string>(() => _tagManager.GetMessage(this));
+            Message = tagManager.GetMessage(this);
         }
 
         /// <inheritdoc />
@@ -49,7 +44,7 @@ namespace ReactiveGit.Library.Core.Model
         /// <summary>
         /// Gets a message about the tag.
         /// </summary>
-        public string Message => _message.Value;
+        public IObservable<string> Message { get; }
 
         /// <summary>
         /// Gets the name of the tag.

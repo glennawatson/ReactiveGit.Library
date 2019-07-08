@@ -65,7 +65,7 @@ namespace ReactiveGit.Library.RunProcess.Managers
                         var d = new CompositeDisposable();
 
                         var schedule = scheduler.ScheduleAsync(
-                            async (ctrl, token) =>
+                            async (_, token) =>
                                 {
                                     var gitArguments = string.Join(" ", gitArgumentsEnumerable);
                                     if (includeStandardArguments)

@@ -35,7 +35,7 @@ namespace ReactiveGit.Library.RunProcess.Managers
         }
 
         /// <inheritdoc />
-        public string GetMessage(GitTag gitTag)
+        public IObservable<string> GetMessage(GitTag gitTag)
         {
             if (gitTag == null)
             {
@@ -43,9 +43,7 @@ namespace ReactiveGit.Library.RunProcess.Managers
             }
 
             string[] arguments = { "show", "--format=\"%B\"", gitTag.Name };
-            var listValue = _processManager.RunGit(arguments).ToList().Wait();
-
-            return string.Join("\r\n", listValue).Trim(' ', '\r', '\n');
+            return _processManager.RunGit(arguments).ToList().Select(x => string.Join("\r\n", x).Trim(' ', '\r', '\n'));
         }
 
         private GitTag StringToGitTag(string line)

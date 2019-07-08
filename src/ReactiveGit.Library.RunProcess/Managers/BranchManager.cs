@@ -66,52 +66,43 @@ namespace ReactiveGit.Library.RunProcess.Managers
         }
 
         /// <inheritdoc />
-        public int GetCommitCount(GitBranch branchName, IScheduler scheduler = null)
+        public IObservable<int> GetCommitCount(GitBranch branchName, IScheduler scheduler = null)
         {
             if (branchName == null)
             {
                 throw new ArgumentNullException(nameof(branchName));
             }
 
-            return
-                Convert.ToInt32(
-                    _gitProcessManager.RunGit(new[] { $"rev-list --count {branchName.FriendlyName}" }, scheduler: scheduler).ToList().Wait().First(),
-                    CultureInfo.InvariantCulture);
+            return _gitProcessManager.RunGit(new[] { $"rev-list --count {branchName.FriendlyName}" }, scheduler: scheduler)
+                .ToList()
+                .FirstAsync()
+                .Select(x => Convert.ToInt32(x, CultureInfo.InvariantCulture))
+                .FirstAsync();
         }
 
         /// <inheritdoc />
-        public string GetCommitMessageLong(GitCommit commit, IScheduler scheduler = null)
+        public IObservable<string> GetCommitMessageLong(GitCommit commit, IScheduler scheduler = null)
         {
             if (commit == null)
             {
                 throw new ArgumentNullException(nameof(commit));
             }
 
-            var result =
-                _gitProcessManager.RunGit(new[] { "log", "--format=%B", "-n 1", commit.Sha }, scheduler: scheduler).Select(
-                    x => x.Trim().Trim('\r', '\n')).ToList().Wait();
-            return string.Join("\r\n", result).Trim().Trim('\r', '\n', ' ');
+            return _gitProcessManager.RunGit(new[] { "log", "--format=%B", "-n 1", commit.Sha }, scheduler: scheduler)
+                .Select(x => x.Trim().Trim('\r', '\n'))
+                .ToList()
+                .Select(result => string.Join("\r\n", result).Trim().Trim('\r', '\n', ' '));
         }
 
         /// <inheritdoc />
         public IObservable<string> GetCommitMessagesAfterParent(GitCommit parent, IScheduler scheduler = null)
         {
-            return Observable.Create<string>(
-                async (observer, token) =>
-                    {
-                        var arguments =
-                            ExtractLogParameter(
-                                await CurrentBranch.LastOrDefaultAsync(),
-                                0,
-                                0,
-                                GitLogOptions.None,
-                                $"{parent.Sha}..HEAD");
-                        _gitProcessManager.RunGit(arguments, scheduler: scheduler).Select(
-                            x => ConvertStringToGitCommit(x).MessageLong.Trim('\r', '\n')).Subscribe(
-                            observer.OnNext,
-                            observer.OnCompleted,
-                            token);
-                    });
+            return CurrentBranch.Select(branch => ExtractLogParameter(branch, 0, 0, GitLogOptions.None, $"{parent.Sha}..HEAD"))
+                .Switch()
+                .Select(x => _gitProcessManager.RunGit(x, scheduler: scheduler))
+                .Switch()
+                .Select(x => ConvertStringToGitCommit(x).MessageLong.Select(y => y.Trim('\r', '\n')))
+                .Switch();
         }
 
         /// <inheritdoc />
@@ -122,10 +113,9 @@ namespace ReactiveGit.Library.RunProcess.Managers
             GitLogOptions logOptions,
             IScheduler scheduler = null)
         {
-            var arguments =
-                new[] { "log" }.Concat(ExtractLogParameter(branch, skip, limit, logOptions, "HEAD")).ToArray();
-
-            return _gitProcessManager.RunGit(arguments, scheduler: scheduler).Select(ConvertStringToGitCommit);
+            return Observable.Return(new[] { "log" })
+                .CombineLatest(ExtractLogParameter(branch, skip, limit, logOptions, "HEAD"), (cmd, other) => cmd.Concat(other))
+                .SelectMany(x => _gitProcessManager.RunGit(x, scheduler: scheduler).Select(ConvertStringToGitCommit));
         }
 
         /// <inheritdoc />
@@ -235,7 +225,7 @@ namespace ReactiveGit.Library.RunProcess.Managers
                        parents);
         }
 
-        private IEnumerable<string> ExtractLogParameter(
+        private IObservable<IEnumerable<string>> ExtractLogParameter(
             GitBranch branch,
             int skip,
             int limit,
@@ -276,22 +266,16 @@ namespace ReactiveGit.Library.RunProcess.Managers
 
             GenerateFormat(arguments);
 
+            var argumentsObservable = Observable.Return(arguments);
+
             if (logOptions.HasFlag(GitLogOptions.BranchOnlyAndParent))
             {
-                var ignoreBranches = new StringBuilder("--not ");
-
-                foreach (var testBranch in GetLocalBranches().ToList().Wait())
-                {
-                    if (testBranch != branch)
-                    {
-                        ignoreBranches.Append($"{testBranch.FriendlyName} ");
-                    }
-                }
-
-                arguments.Add($" {ignoreBranches} -- ");
+                argumentsObservable = argumentsObservable.CombineLatest(
+                    GetLocalBranches().Where(x => x != branch).Select(x => x.FriendlyName).ToList().Select(x => $"--not {string.Join(" ", x)} --"),
+                    (arg, branches) => arg.Concat(new[] { branches }).ToList());
             }
 
-            return arguments;
+            return argumentsObservable;
         }
 
         private void GetCurrentCheckedOutBranch()

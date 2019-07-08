@@ -17,8 +17,6 @@ namespace ReactiveGit.Library.Core.Model
     {
         private readonly IBranchManager _branchManager;
 
-        private readonly Lazy<string> _messageLong;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="GitCommit" /> class.
         /// </summary>
@@ -44,9 +42,6 @@ namespace ReactiveGit.Library.Core.Model
             string shaShort,
             IReadOnlyList<string> parents)
         {
-            _branchManager = branchManager;
-            _messageLong = new Lazy<string>(() => _branchManager.GetCommitMessageLong(this));
-
             Sha = sha;
             MessageShort = messageShort;
             DateTime = dateTime;
@@ -56,6 +51,9 @@ namespace ReactiveGit.Library.Core.Model
             Parents = parents;
             CommitterEmail = committerEmail;
             AuthorEmail = authorEmail;
+
+            _branchManager = branchManager ?? throw new ArgumentNullException(nameof(branchManager));
+            MessageLong = _branchManager.GetCommitMessageLong(this);
         }
 
         /// <summary>
@@ -69,7 +67,7 @@ namespace ReactiveGit.Library.Core.Model
         public string AuthorEmail { get; }
 
         /// <summary>
-        /// Gets the commiter of the commit.
+        /// Gets the committer of the commit.
         /// </summary>
         public string Committer { get; }
 
@@ -86,7 +84,7 @@ namespace ReactiveGit.Library.Core.Model
         /// <summary>
         /// Gets the full commit message.
         /// </summary>
-        public string MessageLong => _messageLong.Value;
+        public IObservable<string> MessageLong { get; }
 
         /// <summary>
         /// Gets the description of the commit.

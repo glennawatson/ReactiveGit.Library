@@ -47,15 +47,16 @@ steps:
   displayName: Build Solutions
   inputs:
     solution: '$(solution)'
-    msbuildArguments: /t:build;pack /p:NoPackageAnalysis=true /p:PackageOutputPath=$(Build.ArtifactStagingDirectory)\artifacts
+    msbuildArguments: /t:build;pack /p:NoPackageAnalysis=true /p:PackageOutputPath=$(Build.ArtifactStagingDirectory)\artifacts /v:m
     configuration: $(BuildConfiguration)
     maximumCpuCount: true
 
 - task: DotNetCoreCLI@2
+  displayName: Run Unit Tests
   inputs:
     command: test
     projects: '**/*Tests/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+    arguments: '--configuration $(buildConfiguration) --logger:"console;verbosity=detailed"'
   env:
     COREHOST_TRACE: 0
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1

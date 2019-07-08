@@ -56,10 +56,10 @@ namespace ReactiveGit.Library.Core.ExtensionMethods
                                         _ => { },
                                         observer.OnError,
                                         () =>
-                                {
-                                    observer.OnNext(Unit.Default);
-                                    observer.OnCompleted();
-                                },
+                                            {
+                                                observer.OnNext(Unit.Default);
+                                                observer.OnCompleted();
+                                            },
                                         token);
                         }
                     });

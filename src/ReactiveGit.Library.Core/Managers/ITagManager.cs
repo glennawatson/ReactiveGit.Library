@@ -25,6 +25,6 @@ namespace ReactiveGit.Library.Core.Managers
         /// </summary>
         /// <param name="gitTag">The tag to get a message for.</param>
         /// <returns>The message for the tag.</returns>
-        string GetMessage(GitTag gitTag);
+        IObservable<string> GetMessage(GitTag gitTag);
     }
 }

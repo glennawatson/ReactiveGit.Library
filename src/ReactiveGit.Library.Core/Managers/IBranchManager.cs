@@ -34,7 +34,7 @@ namespace ReactiveGit.Library.Core.Managers
         /// <param name="branchName">The name of the branch.</param>
         /// <param name="scheduler">The scheduler to schedule the task on.</param>
         /// <returns>The number of commits.</returns>
-        int GetCommitCount(GitBranch branchName, IScheduler scheduler = null);
+        IObservable<int> GetCommitCount(GitBranch branchName, IScheduler scheduler = null);
 
         /// <summary>
         /// Gets the commit message for a commit.
@@ -42,7 +42,7 @@ namespace ReactiveGit.Library.Core.Managers
         /// <param name="commit">The commit to get the message for.</param>
         /// <param name="scheduler">The scheduler to schedule the task on.</param>
         /// <returns>The message of the commit.</returns>
-        string GetCommitMessageLong(GitCommit commit, IScheduler scheduler = null);
+        IObservable<string> GetCommitMessageLong(GitCommit commit, IScheduler scheduler = null);
 
         /// <summary>
         /// Gets the command messages after the specified parent object.

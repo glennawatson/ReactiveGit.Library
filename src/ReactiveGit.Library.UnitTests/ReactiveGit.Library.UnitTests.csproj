@@ -1,13 +1,20 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.2</TargetFrameworks>
     <NoWarn>$(NoWarn);CA2000</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="fluentassertions" Version="5.7.0" />
     <PackageReference Include="LibGit2Sharp" Version="0.26.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="Shouldly" Version="4.0.0-beta0002" />
+    <PackageReference Include="PublicApiGenerator" Version="9.1.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ReactiveGit.Library.RunProcess\ReactiveGit.Library.RunProcess.csproj" />
   </ItemGroup>
+
+
 </Project>
