@@ -11,7 +11,6 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ReactiveGit.Library.Core.Exceptions;
 using ReactiveGit.Library.Core.Model;
@@ -25,68 +24,67 @@ namespace ReactiveGit.Library.UnitTests
     [TestClass]
     public class GitUnitTest
     {
-        /////// <summary>
-        /////// Test creating several branches and making sure that the full history comes back.
-        /////// </summary>
-        /////// <returns>A task to monitor the progress.</returns>
-        ////[TestMethod]
-        ////public async Task TestFullHistory()
-        ////{
-        ////    WriteLine("Executing " + nameof(TestFullHistory));
+        /// <summary>
+        /// Test creating several branches and making sure that the full history comes back.
+        /// </summary>
+        /// <returns>A task to monitor the progress.</returns>
+        [TestMethod]
+        public async Task TestFullHistory()
+        {
+            WriteLine("Executing " + nameof(TestFullHistory));
 
-        ////    var (tempDirectory, local) = await GenerateGitRepository().ConfigureAwait(false);
+            var (tempDirectory, local) = await GenerateGitRepository().ConfigureAwait(false);
 
-        ////    var numberCommits = 10;
-        ////    await GenerateCommits(numberCommits, tempDirectory, local, "master").ConfigureAwait(false);
-        ////    var branchManager = new BranchManager(local);
+            var numberCommits = 10;
+            await GenerateCommits(numberCommits, tempDirectory, local, "master").ConfigureAwait(false);
+            var branchManager = new BranchManager(local);
 
-        ////    var commits = await branchManager.GetCommitsForBranch(
-        ////        new GitBranch("master", false, false),
-        ////        0,
-        ////        0,
-        ////        GitLogOptions.BranchOnlyAndParent,
-        ////        scheduler: ImmediateScheduler.Instance).ToList();
+            var commits = await branchManager.GetCommitsForBranch(
+                new GitBranch("master", false, false),
+                0,
+                0,
+                GitLogOptions.BranchOnlyAndParent,
+                scheduler: ImmediateScheduler.Instance).ToList();
 
-        ////    commits.Count.Should().Be(numberCommits, $"We have done {numberCommits} commits");
+            commits.Count.Should().Be(numberCommits, $"We have done {numberCommits} commits");
 
-        ////    commits.Should().BeInDescendingOrder(x => x.DateTime);
-        ////    await local.RunGit(new[] { "branch test1" }).ObserveOn(ImmediateScheduler.Instance).FirstOrDefaultAsync();
-        ////    await local.RunGit(new[] { "checkout test1" }).ObserveOn(ImmediateScheduler.Instance).FirstOrDefaultAsync();
+            commits.Should().BeInDescendingOrder(x => x.DateTime);
+            await local.RunGit(new[] { "branch test1" }).ObserveOn(ImmediateScheduler.Instance).FirstOrDefaultAsync();
+            await local.RunGit(new[] { "checkout test1" }).ObserveOn(ImmediateScheduler.Instance).FirstOrDefaultAsync();
 
-        ////    await GenerateCommits(numberCommits, tempDirectory, local, "master").ConfigureAwait(false);
+            await GenerateCommits(numberCommits, tempDirectory, local, "master").ConfigureAwait(false);
 
-        ////    commits = await branchManager.GetCommitsForBranch(new GitBranch("test1", false, false), 0, 0, GitLogOptions.None).ObserveOn(ImmediateScheduler.Instance).ToList();
+            commits = await branchManager.GetCommitsForBranch(new GitBranch("test1", false, false), 0, 0, GitLogOptions.None).ObserveOn(ImmediateScheduler.Instance).ToList();
 
-        ////    commits.Count.Should().Be(numberCommits * 2, $"We have done {numberCommits + 1} commits");
-        ////}
+            commits.Count.Should().Be(numberCommits * 2, $"We have done {numberCommits + 1} commits");
+        }
 
-        /////// <summary>
-        /////// Test creating several commits and making sure the get commit message routine
-        /////// returns all the commits from the selected parent.
-        /////// </summary>
-        /////// <returns>A task to monitor the progress.</returns>
-        ////[TestMethod]
-        ////public async Task TestGetAllCommitMessages()
-        ////{
-        ////    WriteLine("Executing " + nameof(TestGetAllCommitMessages));
+        /// <summary>
+        /// Test creating several commits and making sure the get commit message routine
+        /// returns all the commits from the selected parent.
+        /// </summary>
+        /// <returns>A task to monitor the progress.</returns>
+        [TestMethod]
+        public async Task TestGetAllCommitMessages()
+        {
+            WriteLine("Executing " + nameof(TestGetAllCommitMessages));
 
-        ////    var (tempDirectory, local) = await GenerateGitRepository().ConfigureAwait(false);
+            var (tempDirectory, local) = await GenerateGitRepository().ConfigureAwait(false);
 
-        ////    IList<string> commitNames = new List<string>();
-        ////    var numberCommits = 10;
-        ////    await GenerateCommits(numberCommits, tempDirectory, local, "master", commitNames).ConfigureAwait(false);
+            var numberCommits = 10;
+            var commitNames = await GenerateCommits(numberCommits, tempDirectory, local, "master").ConfigureAwait(false);
 
-        ////    var branchManager = new BranchManager(local);
-        ////    var commits = await branchManager.GetCommitsForBranch(
-        ////            new GitBranch("test1", false, false),
-        ////            0,
-        ////            0,
-        ////            GitLogOptions.TopologicalOrder,
-        ////            scheduler: ImmediateScheduler.Instance).ToList();
+            var branchManager = new BranchManager(local);
+            var commits = await branchManager.GetCommitsForBranch(
+                    new GitBranch("test1", false, false),
+                    0,
+                    0,
+                    GitLogOptions.TopologicalOrder,
+                    scheduler: ImmediateScheduler.Instance).ToList();
 
-        ////    var commitMessages = await Task.WhenAll(commits.Select(async x => await x.MessageLong)).ConfigureAwait(false);
-        ////    commitMessages.Should().BeEquivalentTo(commitNames.Reverse());
-        ////}
+            var commitMessages = await Task.WhenAll(commits.Select(async x => await x.MessageLong)).ConfigureAwait(false);
+            commitMessages.Should().BeEquivalentTo(commitNames.Reverse());
+        }
 
         /// <summary>
         /// Test getting the history from a freshly formed GIT repository and
@@ -100,7 +98,7 @@ namespace ReactiveGit.Library.UnitTests
             var (tempDirectory, local) = await GenerateGitRepository().ConfigureAwait(false);
 
             var numberCommits = 10;
-            await GenerateCommits(numberCommits, tempDirectory, local, "master").ConfigureAwait(false);
+            var commitMessages = await GenerateCommits(numberCommits, tempDirectory, local, "master").ConfigureAwait(false);
 
             var branchManager = new BranchManager(local);
 
@@ -111,20 +109,11 @@ namespace ReactiveGit.Library.UnitTests
                     GitLogOptions.BranchOnlyAndParent).ObserveOn(Scheduler.Immediate).ToList();
             commits.Count.Should().Be(numberCommits, $"We have done {numberCommits} commits");
 
-            using (var repository = new Repository(tempDirectory))
-            {
-                var branch = repository.Branches.FirstOrDefault(x => x.FriendlyName == "master");
-                branch.Should().NotBeNull();
-
-                if (branch != null)
-                {
-                    CheckCommits(branch.Commits.ToList(), commits);
-                }
-            }
+            CheckCommits(commitMessages, commits);
 
             commits.Should().BeInDescendingOrder(x => x.DateTime);
 
-            await GenerateCommits(numberCommits, tempDirectory, local, "test1").ConfigureAwait(false);
+            commitMessages = await GenerateCommits(numberCommits, tempDirectory, local, "test1").ConfigureAwait(false);
 
             commits = await branchManager.GetCommitsForBranch(
                     new GitBranch("test1", false, false),
@@ -134,16 +123,7 @@ namespace ReactiveGit.Library.UnitTests
 
             commits.Count.Should().Be(numberCommits, $"We have done {numberCommits} commits");
 
-            using (var repository = new Repository(tempDirectory))
-            {
-                var branch = repository.Branches.FirstOrDefault(x => x.FriendlyName == "test1");
-                branch.Should().NotBeNull();
-
-                if (branch != null)
-                {
-                    CheckCommits(branch.Commits.Take(10).ToList(), commits);
-                }
-            }
+            CheckCommits(commitMessages, commits);
         }
 
         /// <summary>
@@ -151,10 +131,9 @@ namespace ReactiveGit.Library.UnitTests
         /// </summary>
         /// <param name="repoCommits">The commits coming from LibGit2.</param>
         /// <param name="commits">The commits coming from the GIT command line BranchManager.</param>
-        private static void CheckCommits(IList<Commit> repoCommits, IList<GitCommit> commits)
+        private static void CheckCommits(IList<string> repoCommits, IList<GitCommit> commits)
         {
-            repoCommits.Select(x => x.Sha).Should().BeEquivalentTo(commits.Select(x => x.Sha));
-            repoCommits.Select(x => x.MessageShort).Should().BeEquivalentTo(commits.Select(x => x.MessageShort));
+            repoCommits.Should().BeEquivalentTo(commits.Select(x => x.MessageShort));
         }
 
         /// <summary>
@@ -183,14 +162,12 @@ namespace ReactiveGit.Library.UnitTests
         /// <param name="directory">The directory of the repository.</param>
         /// <param name="local">The repository manager for the repository.</param>
         /// <param name="branchName">The branch name to add the commits into.</param>
-        /// <param name="commitMessages">A optional output list which is populated with the commit messages.</param>
         /// <returns>A task to monitor the progress.</returns>
-        private static async Task GenerateCommits(
+        private static async Task<IList<string>> GenerateCommits(
             int numberCommits,
             string directory,
             IGitProcessManager local,
-            string branchName,
-            IList<string> commitMessages = null)
+            string branchName)
         {
             WriteLine("Executing " + nameof(GenerateCommits));
             if (branchName != "master")
@@ -207,13 +184,15 @@ namespace ReactiveGit.Library.UnitTests
                 // Ignored
             }
 
-            for (var i = 0; i < numberCommits; ++i)
+            var commitNames = Enumerable.Range(0, numberCommits).Select(i => branchName + " Hello World " + i).ToList();
+            foreach (var commitName in commitNames)
             {
-                File.WriteAllText(Path.Combine(directory, Path.GetRandomFileName()), @"Hello World" + i);
+                File.WriteAllText(Path.Combine(directory, Path.GetRandomFileName()), commitName);
                 await local.RunGit(new[] { "add -A" }).ObserveOn(ImmediateScheduler.Instance).LastOrDefaultAsync();
-                commitMessages?.Add($"Commit {branchName}-{i}");
-                await local.RunGit(new[] { $"commit -m \"Commit {branchName}-{i}\"" }).ObserveOn(ImmediateScheduler.Instance).LastOrDefaultAsync();
+                await local.RunGit(new[] { $"commit -m \"{commitName}\"" }).ObserveOn(ImmediateScheduler.Instance).LastOrDefaultAsync();
             }
+
+            return commitNames;
         }
 
         private static void WriteLine(string format, params string[] args)
