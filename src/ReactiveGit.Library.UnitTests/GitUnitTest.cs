@@ -159,6 +159,8 @@ namespace ReactiveGit.Library.UnitTests
 
             await local.RunGit(new[] { "init" }).ObserveOn(ImmediateScheduler.Instance).LastOrDefaultAsync();
             await local.RunGit(new[] { "config --local commit.gpgsign false" }).ObserveOn(ImmediateScheduler.Instance).LastOrDefaultAsync();
+            await local.RunGit(new[] { "config --local user.email you@example.com" }).ObserveOn(ImmediateScheduler.Instance).LastOrDefaultAsync();
+            await local.RunGit(new[] { "config --local user.name Name" }).ObserveOn(ImmediateScheduler.Instance).LastOrDefaultAsync();
             return (tempDirectory, local);
         }
 
