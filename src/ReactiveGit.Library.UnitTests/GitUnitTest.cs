@@ -43,8 +43,7 @@ namespace ReactiveGit.Library.UnitTests
                 new GitBranch("master", false, false),
                 0,
                 0,
-                GitLogOptions.BranchOnlyAndParent,
-                scheduler: ImmediateScheduler.Instance).ToList();
+                GitLogOptions.BranchOnlyAndParent).ObserveOn(ImmediateScheduler.Instance).ToList();
 
             commits.Count.Should().Be(numberCommits, $"We have done {numberCommits} commits");
 
@@ -79,8 +78,7 @@ namespace ReactiveGit.Library.UnitTests
                     new GitBranch("test1", false, false),
                     0,
                     0,
-                    GitLogOptions.TopologicalOrder,
-                    scheduler: ImmediateScheduler.Instance).ToList();
+                    GitLogOptions.TopologicalOrder).ObserveOn(ImmediateScheduler.Instance).ToList();
 
             var commitMessages = await Task.WhenAll(commits.Select(async x => await x.MessageLong)).ConfigureAwait(false);
             commitMessages.Should().BeEquivalentTo(commitNames.Reverse());
