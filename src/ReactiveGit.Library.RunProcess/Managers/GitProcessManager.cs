@@ -149,7 +149,7 @@ namespace ReactiveGit.Library.RunProcess.Managers
         private static Process CreateGitProcess(string arguments, string repoDirectory)
         {
             var gitInstallationPath = GitHelper.GetGitInstallationPath();
-            var pathToGit = Path.Combine(Path.Combine(gitInstallationPath, @"bin\git.exe"));
+            var pathToGit = Path.Combine(Path.Combine(gitInstallationPath, "git.exe"));
             return new Process
             {
                 StartInfo =

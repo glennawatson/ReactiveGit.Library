@@ -84,19 +84,9 @@ namespace ReactiveGit.Library.RunProcess.Helpers
         private static string GetInstallPathFromEnvironmentVariable()
         {
             var path = Environment.GetEnvironmentVariable("PATH");
-            if (path == null)
-            {
-                return null;
-            }
 
-            var allPaths = path.Split(';');
-            var gitPath = allPaths.FirstOrDefault(p => p.ToLowerInvariant().TrimEnd('\\').EndsWith("git\\cmd", StringComparison.OrdinalIgnoreCase));
-            if ((gitPath != null) && Directory.Exists(gitPath))
-            {
-                gitPath = Directory.GetParent(gitPath).FullName.TrimEnd('\\');
-            }
-
-            return gitPath;
+            var allPaths = path?.Split(';');
+            return allPaths?.FirstOrDefault(p => p.ToLowerInvariant().TrimEnd('\\').EndsWith("git\\cmd", StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -113,9 +103,10 @@ namespace ReactiveGit.Library.RunProcess.Helpers
                         @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion",
                         "ProgramW6432Dir",
                         null);
+
                 if (x64ProgramFiles != null)
                 {
-                    var gitPathX64 = Path.Combine(x64ProgramFiles.ToString(), "git");
+                    var gitPathX64 = Path.Combine(x64ProgramFiles.ToString(), "git\\cmd");
                     if (Directory.Exists(gitPathX64))
                     {
                         return gitPathX64.TrimEnd('\\');
@@ -124,7 +115,7 @@ namespace ReactiveGit.Library.RunProcess.Helpers
             }
 
             // Else, this is a 64bit or a 32bit machine, and the user installed 32bit git
-            var gitPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "git");
+            var gitPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "git\\cmd");
             return Directory.Exists(gitPath) ? gitPath.TrimEnd('\\') : null;
         }
 
