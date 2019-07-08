@@ -1,0 +1,8 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras">
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    </PropertyGroup>
+    <ItemGroup>
+      <PackageReference Include="System.Reactive" Version="4.1.5" />
+    </ItemGroup>
+</Project>
