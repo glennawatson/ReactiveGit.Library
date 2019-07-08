@@ -1,0 +1,13 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras">
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
+    <NoWarn>$(NoWarn);CA2000</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="fluentassertions" Version="5.7.0" />
+    <PackageReference Include="LibGit2Sharp" Version="0.26.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ReactiveGit.Library.RunProcess\ReactiveGit.Library.RunProcess.csproj" />
+  </ItemGroup>
+</Project>
