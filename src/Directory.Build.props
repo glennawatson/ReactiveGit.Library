@@ -8,14 +8,14 @@
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)analyzers.ruleset</CodeAnalysisRuleSet>
 
     <Authors>Glenn Watson</Authors>
-    <Copyright>Copyright (c) Glenn Watson</Copyright>
+    <Copyright>Copyright (c) 2019 Glenn Watson</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/glennawatson/GitSMimeSign/</PackageProjectUrl>
-    <PackageDescription>A global tool for performing GIT SMime Sign operations.</PackageDescription>
+    <PackageProjectUrl>https://github.com/glennawatson/ReactiveGit.Library</PackageProjectUrl>
+    <PackageDescription>Exposes GIT functionality through observables..</PackageDescription>
     <Owners>glennawatson</Owners>
-    <PackageTags>git;x509;smime</PackageTags>
-    <PackageReleaseNotes>https://github.com/glennawatson/GitSMimeSign/releases</PackageReleaseNotes>
-    <RepositoryUrl>https://github.com/glennawatson/GitSMimeSign</RepositoryUrl>
+    <PackageTags>git;reactive extensions;api</PackageTags>
+    <PackageReleaseNotes>https://github.com/glennawatson/ReactiveGit.Library/releases</PackageReleaseNotes>
+    <RepositoryUrl>https://github.com/glennawatson/ReactiveGit.Library</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 
     <!-- disable sourcelink on mono, to workaround https://github.com/dotnet/sourcelink/issues/155 -->
