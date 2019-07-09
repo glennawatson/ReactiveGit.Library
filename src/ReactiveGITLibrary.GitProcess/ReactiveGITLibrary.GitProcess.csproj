@@ -6,7 +6,7 @@
     <PackageReference Include="Microsoft.Win32.Registry" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ReactiveGit.Library.Core\ReactiveGit.Library.Core.csproj" />
+    <ProjectReference Include="..\ReactiveGITLibrary.Core\ReactiveGITLibrary.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
