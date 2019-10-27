@@ -4,7 +4,7 @@
     <NoWarn>$(NoWarn);CA2000</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="fluentassertions" Version="5.7.0" />
+    <PackageReference Include="fluentassertions" Version="5.9.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.3.0" />
     <PackageReference Include="Shouldly" Version="4.0.0-beta0002" />
     <PackageReference Include="PublicApiGenerator" Version="9.1.0" />
