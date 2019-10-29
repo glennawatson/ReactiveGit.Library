@@ -6,15 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reactive.Linq;
-using ReactiveGit.Library.Core.Managers;
+using ReactiveGITLibrary.Core.Managers;
 using Splat;
 
-namespace ReactiveGit.Library.Core.Model
+namespace ReactiveGITLibrary.Core.Model
 {
     /// <summary>
     /// A commit in GIT.
     /// </summary>
-    [DebuggerDisplay("Id = {Sha}")]
+    [DebuggerDisplay("Id = {" + nameof(Sha) + "}")]
     public class GitCommit : IEquatable<GitCommit>, IGitIdObject, IEnableLogger
     {
         private readonly IBranchManager _branchManager;
@@ -44,15 +44,13 @@ namespace ReactiveGit.Library.Core.Model
             string shaShort,
             IReadOnlyList<string> parents)
         {
+            Author = new GitUserDetails(author, authorEmail);
+            Committer = new GitUserDetails(committer, committerEmail);
             Sha = sha;
             MessageShort = messageShort;
             DateTime = dateTime;
-            Author = author;
-            Committer = committer;
             ShaShort = shaShort;
             Parents = parents;
-            CommitterEmail = committerEmail;
-            AuthorEmail = authorEmail;
 
             _branchManager = branchManager ?? throw new ArgumentNullException(nameof(branchManager));
             MessageLong = _branchManager.GetCommitMessageLong(this).Do(x => this.Log().Debug("Got a long commit message with " + x));
@@ -61,22 +59,12 @@ namespace ReactiveGit.Library.Core.Model
         /// <summary>
         /// Gets the author of the commit.
         /// </summary>
-        public string Author { get; }
-
-        /// <summary>
-        /// Gets the author's email.
-        /// </summary>
-        public string AuthorEmail { get; }
+        public GitUserDetails Author { get; }
 
         /// <summary>
         /// Gets the committer of the commit.
         /// </summary>
-        public string Committer { get; }
-
-        /// <summary>
-        /// Gets the committer's email.
-        /// </summary>
-        public string CommitterEmail { get; }
+        public GitUserDetails Committer { get; }
 
         /// <summary>
         /// Gets the date time of the commit.

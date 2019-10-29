@@ -15,8 +15,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using ReactiveGit.Library.Core.Exceptions;
 using ReactiveGit.Library.RunProcess.Helpers;
+using ReactiveGITLibrary.Core.Exceptions;
 
 namespace ReactiveGit.Library.RunProcess.Managers
 {

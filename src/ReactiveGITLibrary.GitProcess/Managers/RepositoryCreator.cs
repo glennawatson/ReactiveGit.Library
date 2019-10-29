@@ -7,9 +7,9 @@ using System.IO;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using ReactiveGit.Library.Core.Exceptions;
-using ReactiveGit.Library.Core.Managers;
 using ReactiveGit.Library.RunProcess.Helpers;
+using ReactiveGITLibrary.Core.Exceptions;
+using ReactiveGITLibrary.Core.Managers;
 
 namespace ReactiveGit.Library.RunProcess.Managers
 {

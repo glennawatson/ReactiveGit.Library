@@ -6,7 +6,7 @@ using System;
 using System.Reactive;
 using System.Reactive.Linq;
 
-namespace ReactiveGit.Library.Core.ExtensionMethods
+namespace ReactiveGITLibrary.Core.ExtensionMethods
 {
     /// <summary>
     /// A set of extension methods related to observables.

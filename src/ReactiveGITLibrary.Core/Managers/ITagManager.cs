@@ -4,9 +4,9 @@
 
 using System;
 using System.Reactive.Concurrency;
-using ReactiveGit.Library.Core.Model;
+using ReactiveGITLibrary.Core.Model;
 
-namespace ReactiveGit.Library.Core.Managers
+namespace ReactiveGITLibrary.Core.Managers
 {
     /// <summary>
     /// A manager for handling tags.

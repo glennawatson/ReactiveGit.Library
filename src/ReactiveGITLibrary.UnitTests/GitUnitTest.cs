@@ -12,9 +12,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ReactiveGit.Library.Core.Exceptions;
-using ReactiveGit.Library.Core.Model;
 using ReactiveGit.Library.RunProcess.Managers;
+using ReactiveGITLibrary.Core.Exceptions;
+using ReactiveGITLibrary.Core.Model;
 using Splat;
 
 namespace ReactiveGit.Library.UnitTests

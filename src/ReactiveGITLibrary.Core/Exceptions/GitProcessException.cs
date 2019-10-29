@@ -4,7 +4,7 @@
 
 using System;
 
-namespace ReactiveGit.Library.Core.Exceptions
+namespace ReactiveGITLibrary.Core.Exceptions
 {
     /// <summary>
     /// A exception that occurs when a GIT operation didn't occurr as expected.

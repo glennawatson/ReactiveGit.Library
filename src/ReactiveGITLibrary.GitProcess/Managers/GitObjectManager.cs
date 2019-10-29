@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Concurrency;
-using ReactiveGit.Library.Core.ExtensionMethods;
-using ReactiveGit.Library.Core.Managers;
-using ReactiveGit.Library.Core.Model;
+using ReactiveGITLibrary.Core.ExtensionMethods;
+using ReactiveGITLibrary.Core.Managers;
+using ReactiveGITLibrary.Core.Model;
 
 namespace ReactiveGit.Library.RunProcess.Managers
 {

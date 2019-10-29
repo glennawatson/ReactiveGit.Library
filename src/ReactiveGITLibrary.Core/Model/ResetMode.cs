@@ -2,7 +2,7 @@
 // Glenn Watson licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for full license information.
 
-namespace ReactiveGit.Library.Core.Model
+namespace ReactiveGITLibrary.Core.Model
 {
     /// <summary>
     /// The reset mode when it comes to resetting a git object.

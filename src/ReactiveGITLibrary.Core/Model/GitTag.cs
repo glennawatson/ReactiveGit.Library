@@ -3,9 +3,9 @@
 // See the LICENSE file in the project root for full license information.
 
 using System;
-using ReactiveGit.Library.Core.Managers;
+using ReactiveGITLibrary.Core.Managers;
 
-namespace ReactiveGit.Library.Core.Model
+namespace ReactiveGITLibrary.Core.Model
 {
     /// <summary>
     /// Represents a git tag.
@@ -22,6 +22,11 @@ namespace ReactiveGit.Library.Core.Model
         /// <param name="dateTime">The date time the tag was created.</param>
         public GitTag(ITagManager tagManager, string name, string shaShort, string sha, DateTime dateTime)
         {
+            if (tagManager == null)
+            {
+                throw new ArgumentNullException(nameof(tagManager));
+            }
+
             Name = name;
             Sha = sha;
             ShaShort = shaShort;

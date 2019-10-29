@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ReactiveGit.Library.Core.ExtensionMethods
+namespace ReactiveGITLibrary.Core.ExtensionMethods
 {
     /// <summary>
     /// Extension methods relating to performing a binary search.
@@ -53,7 +53,7 @@ namespace ReactiveGit.Library.Core.ExtensionMethods
         /// <typeparam name="TItem">The item type to search.</typeparam>
         /// <typeparam name="TValue">The value type to search.</typeparam>
         /// <param name="list">The list to search.</param>
-        /// <param name="comparer">The coparer to compare against.</param>
+        /// <param name="comparer">The comparer to compare against.</param>
         /// <param name="value">The value to search for.</param>
         /// <returns>
         /// The method returns the index of the given value in the list. If the

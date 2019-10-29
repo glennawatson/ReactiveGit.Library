@@ -4,7 +4,7 @@
 
 using System;
 
-namespace ReactiveGit.Library.Core.Model
+namespace ReactiveGITLibrary.Core.Model
 {
     /// <summary>
     /// Represents a item in the GIT ref log.

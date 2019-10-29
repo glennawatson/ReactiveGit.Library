@@ -4,7 +4,7 @@
 
 using System;
 
-namespace ReactiveGit.Library.Core.ExtensionMethods
+namespace ReactiveGITLibrary.Core.ExtensionMethods
 {
     /// <summary>
     /// Extension methods related to strings.
@@ -38,9 +38,7 @@ namespace ReactiveGit.Library.Core.ExtensionMethods
                 throw new ArgumentNullException(nameof(input));
             }
 
-            input = input.Trim('\r', '\n').Trim();
-
-            return input;
+            return input.Trim('\r', '\n').Trim();
         }
     }
 }

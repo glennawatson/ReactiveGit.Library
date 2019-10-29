@@ -5,7 +5,7 @@
 using System;
 using System.Reactive;
 
-namespace ReactiveGit.Library.Core.Managers
+namespace ReactiveGITLibrary.Core.Managers
 {
     /// <summary>
     /// A git repository instance.

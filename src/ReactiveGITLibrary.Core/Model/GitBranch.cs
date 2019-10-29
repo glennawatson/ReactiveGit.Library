@@ -5,7 +5,7 @@
 using System;
 using System.Diagnostics;
 
-namespace ReactiveGit.Library.Core.Model
+namespace ReactiveGITLibrary.Core.Model
 {
     /// <summary>
     /// Represents a branch in GIT.

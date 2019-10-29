@@ -4,7 +4,7 @@
 
 using System;
 
-namespace ReactiveGit.Library.Core.Model
+namespace ReactiveGITLibrary.Core.Model
 {
     /// <summary>
     /// A list of options when we are doing.

@@ -6,7 +6,7 @@ using System;
 using System.Reactive;
 using System.Reactive.Concurrency;
 
-namespace ReactiveGit.Library.Core.Managers
+namespace ReactiveGITLibrary.Core.Managers
 {
     /// <summary>
     /// Responsible for creating a repository.
