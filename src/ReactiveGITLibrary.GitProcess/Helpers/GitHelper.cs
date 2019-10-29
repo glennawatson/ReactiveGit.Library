@@ -3,8 +3,10 @@
 // See the LICENSE file in the project root for full license information.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.Win32;
 using Splat;
@@ -63,6 +65,13 @@ namespace ReactiveGit.Library.RunProcess.Helpers
                 return gitPath;
             }
 
+            gitPath = GetInstallPathFromWhereis();
+            if (gitPath != null)
+            {
+                _logger.Write("Found GIT in directory from whereis: " + gitPath, LogLevel.Debug);
+                return gitPath;
+            }
+
             gitPath = GetInstallPathFromRegistry();
             if (gitPath != null)
             {
@@ -72,7 +81,10 @@ namespace ReactiveGit.Library.RunProcess.Helpers
 
             gitPath = GetInstallPathFromProgramFiles();
 
-            _logger.Write("Found GIT in directory from program files: " + gitPath, LogLevel.Debug);
+            if (gitPath != null)
+            {
+                _logger.Write("Found GIT in directory from program files: " + gitPath, LogLevel.Debug);
+            }
 
             return gitPath;
         }
@@ -83,10 +95,42 @@ namespace ReactiveGit.Library.RunProcess.Helpers
         /// <returns>The installation path or null if unable to be found.</returns>
         private static string GetInstallPathFromEnvironmentVariable()
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return null;
+            }
+
             var path = Environment.GetEnvironmentVariable("PATH");
 
             var allPaths = path?.Split(';');
             return allPaths?.FirstOrDefault(p => p.ToLowerInvariant().TrimEnd('\\').EndsWith("git\\cmd", StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static string GetInstallPathFromWhereis()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return null;
+            }
+
+            using var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "whereis",
+                    Arguments = "git",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
+            };
+
+            process.Start();
+
+            var path = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+
+            return Path.GetDirectoryName(path);
         }
 
         /// <summary>
@@ -95,6 +139,11 @@ namespace ReactiveGit.Library.RunProcess.Helpers
         /// <returns>The installation path or null if unable to be found.</returns>
         private static string GetInstallPathFromProgramFiles()
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return null;
+            }
+
             // If this is a 64bit OS, and the user installed 64bit git, then explictly search that folder.
             if (Environment.Is64BitOperatingSystem)
             {
@@ -125,6 +174,11 @@ namespace ReactiveGit.Library.RunProcess.Helpers
         /// <returns>The installation path or null if unable to be found.</returns>
         private static string GetInstallPathFromRegistry()
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return null;
+            }
+
             // Check reg key for msysGit 2.6.1+
             var installLocation = Registry.GetValue(
                 @"HKEY_LOCAL_MACHINE\SOFTWARE\GitForWindows",
