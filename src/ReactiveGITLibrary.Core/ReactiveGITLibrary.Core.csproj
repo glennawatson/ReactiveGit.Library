@@ -3,7 +3,7 @@
         <TargetFrameworks>netstandard2.0</TargetFrameworks>
     </PropertyGroup>
     <ItemGroup>
-      <PackageReference Include="System.Reactive" Version="4.2.0" />
+      <PackageReference Include="System.Reactive" Version="4.3.2" />
       <PackageReference Include="Splat" Version="9.1.1" />
     </ItemGroup>
 </Project>
